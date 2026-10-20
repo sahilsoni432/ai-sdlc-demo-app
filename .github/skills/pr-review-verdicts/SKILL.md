@@ -20,12 +20,12 @@ description: Review InvoiceApp changes for approval-rule correctness, regression
    - [ ] The dedicated Domain exception maps to HTTP 403.
    - [ ] Each rule has meaningful tests, including blocked-state assertions.
    - [ ] Changes stay within scope; no unrelated refactors.
-3. For each issue, record severity (`critical`, `major`, `minor`, or `trivial`), `file:line`, the finding, and a suggested fix. Use [review-findings-template.md](./assets/review-findings-template.md).
-4. Give **every** finding exactly one verdict: `fixed`, `dismissed`, or `deferred`. For dismissed or deferred findings, state the reason. Do not leave a finding without a verdict.
-5. Re-check any fix against the checklist and confirm the recorded verdict and reason accurately reflect the final state.
+3. For each issue, record severity (`critical`, `major`, `minor`, or `trivial`), `file:line`, the finding, and a suggested fix. Propose a verdict (`fixed`, `dismissed`, or `deferred`) with a rationale, but clearly label it as an agent proposal. Use [review-findings-template.md](./assets/review-findings-template.md).
+4. The human reviewer decides the final verdict for every finding. Keep the agent's **Proposed verdict** and **Rationale** separate from the human's **Verdict** and **Reason**. The agent must not fill in or imply the human's final decision. The human records exactly one final verdict: `fixed`, `dismissed` with a reason, or `deferred` with a reason.
+5. Re-check any completed fix against the checklist and update the human-owned final verdict and reason accordingly.
 
 ## Done when
 
 - [ ] The full checklist has been considered against the change.
-- [ ] Every finding has a severity, file:line, suggested fix, verdict, and applicable reason.
+- [ ] Every finding has a severity, file:line, suggested fix, agent-proposed verdict and rationale, plus a separate human-decided final verdict and applicable reason.
 - [ ] Fixed, dismissed, and deferred outcomes are clearly distinguished.

@@ -1,0 +1,40 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/log-interaction.js UserPromptSubmit"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/log-interaction.js PreToolUse"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/log-interaction.js PostToolUse"
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/log-interaction.js SubagentStart"
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/log-interaction.js SubagentStop"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/log-interaction.js Stop"
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "planner": {
+    "format": "- **Ordered steps:** one discrete implementation or validation step each\n- **Files:** expected files to inspect or change per step\n- **Tests:** rule-by-rule cases and the test file for each\n- **Risks:** assumptions, negative-rule failure modes, and integration points",
+    "required": [
+      "**Ordered steps:**",
+      "**Files:**",
+      "**Tests:**",
+      "**Risks:**"
+    ]
+  },
+  "implementer": {
+    "format": "- **Step:** assigned scope and completion status\n- **Changes:** files and behavior implemented\n- **Build:** command and result\n- **Follow-up:** tests the test writer should add or any blockers",
+    "required": [
+      "**Step:**",
+      "**Changes:**",
+      "**Build:**",
+      "**Follow-up:**"
+    ]
+  },
+  "test-writer": {
+    "format": "- **Coverage:** rule-to-test mapping, including boundary and negative cases\n- **Files:** test files changed\n- **Validation:** `dotnet test backend/InvoiceApp.sln` result\n- **Gaps:** uncovered cases or blockers",
+    "required": [
+      "**Coverage:**",
+      "**Files:**",
+      "**Validation:**",
+      "**Gaps:**"
+    ]
+  },
+  "e2e-tester": {
+    "format": "- **Scenario:** workflow tested and observable outcomes\n- **Files:** page objects and tests changed\n- **Validation:** command and result\n- **Gaps:** environment or coverage limitations",
+    "required": [
+      "**Scenario:**",
+      "**Files:**",
+      "**Validation:**",
+      "**Gaps:**"
+    ]
+  },
+  "mutation-analyst": {
+    "format": "- **Mutation score:** score and killed/survived/no-coverage counts\n- **Survivors:** mutant, affected behavior, and test that would kill it\n- **Record:** `ASSIGNMENT.md` entry added or reason it could not be added\n- **Validation:** Stryker command and result",
+    "required": [
+      "**Mutation score:**",
+      "**Survivors:**",
+      "**Record:**",
+      "**Validation:**"
+    ]
+  },
+  "reviewer": {
+    "format": "| # | Severity | File:line | Finding | Suggested fix | Proposed verdict | Rationale |\n|---|----------|-----------|---------|---------------|------------------|-----------|\n| 1 | <severity> | <file:line> | <finding> | <suggested fix> | <proposed verdict> | <rationale> |\n\nIf there are no findings, state that explicitly.",
+    "required": [
+      "| # | Severity | File:line | Finding | Suggested fix | Proposed verdict | Rationale |"
+    ]
+  }
+}

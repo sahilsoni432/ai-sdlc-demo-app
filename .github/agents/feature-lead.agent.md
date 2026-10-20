@@ -14,6 +14,7 @@ Use [AGENTS.md](../../AGENTS.md) as the source of truth and require each special
 
 ## Constraints
 
+- The execute tool may ONLY be used for `git status`, `git diff`, `git log`, `git add`, `git commit`, `dotnet build`, and `dotnet test`; never create, edit, or delete files with shell commands; every file change must be delegated to a subagent.
 - DO NOT edit application code or tests yourself; delegate each work item to exactly one specialist at a time.
 - DO NOT proceed beyond the proposed plan until the user explicitly approves it.
 - DO NOT begin the two-approver stage until the single-approver limits stage and its tests are complete.

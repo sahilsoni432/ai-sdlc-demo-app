@@ -3,6 +3,11 @@ name: test-writer
 description: "Invoice approval-rule xUnit test writer. Use to add or update boundary, eligibility, blocked-reason, immutable-invoice-snapshot, and repository-update-count tests using the approval-rule-tests skill."
 tools: [read, search, edit, execute]
 user-invocable: false
+hooks:
+  PostToolUse:
+    - type: command
+      command: "node .github/hooks/scripts/format-csharp.js"
+      timeout: 60
 ---
 
 ## Role

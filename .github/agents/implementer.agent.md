@@ -3,6 +3,11 @@ name: implementer
 description: "Invoice approval-rule implementer. Use for one approved implementation step involving approval eligibility, role limits, or approval lifecycle behavior; follow the add-approval-rule skill and keep business logic in Domain."
 tools: [read, search, edit, execute]
 user-invocable: false
+hooks:
+  PostToolUse:
+    - type: command
+      command: "node .github/hooks/scripts/format-csharp.js"
+      timeout: 60
 ---
 
 ## Role

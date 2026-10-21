@@ -6,6 +6,8 @@ I worked on approval limits by role in the invoice approval service of
 [`ai-sdlc-demo-app`](https://github.com/sahilsoni432/ai-sdlc-demo-app), on
 `feature/approval-limits`.
 
+Pull request: https://github.com/sahilsoni432/ai-sdlc-demo-app/pull/1
+
 The brief rules were:
 
 - Managers may approve invoices up to 50,000.
@@ -304,9 +306,7 @@ before the hooks existed, so I exported it manually to
 
 ## 12. Demo video
 
-**TODO — add video link after recording.**
-
-Planned length: 8–10 minutes.
-
-Planned live demonstrations: unit tests, a Stryker run, and the Playwright E2E
-test.
+The demo video (8–10 minutes, MP4) is part of the submission ZIP on OneDrive:
+`10-Demo-video/AI-in-SDLC-approval-limits-demo-SahilSoni.mp4`.
+Shown live: the running app (Manager limit and the two-approver flow), the 35 unit tests,
+the Playwright E2E test in a visible browser, and a Stryker mutation run.

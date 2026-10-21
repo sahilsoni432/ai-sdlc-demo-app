@@ -20,6 +20,9 @@ Hooks in `.github/hooks/ai-interaction-log.json` append every prompt, tool call,
 | Step 6: Playwright E2E test | `0019b62 test: add Playwright E2E test for rejected over-limit approval (Stage 3)` |
 | Hand-in 6: mutation score after | `fe3360c test: kill surviving mutants and record final Stryker score (Stage 4)` |
 | Step 7: agent review + human verdicts | `437a429 docs: record agent review findings and human verdicts (Stage 4)` |
+| — | `1c6c865 docs: add generated index of AI interaction logs` |
+| — | `76a7e59 docs: write the final ASSIGNMENT.md write-up` |
+| — | `430a251 docs: tick task 4.1 (mutation scores recorded in PR description)` |
 
 ## Transcripts
 
@@ -83,6 +86,12 @@ Hooks in `.github/hooks/ai-interaction-log.json` append every prompt, tool call,
 | 56 | 2026-10-21 | [2026-10-21-21779fab-c831-4911-aca1-75e0fd164f5b.md](transcripts/2026-10-21-21779fab-c831-4911-aca1-75e0fd164f5b.md) | subagent run | Run task 4.2 of the OpenSpec change add-approval-limits: delegate a review of this branch to the reviewer subagent (p... |
 | 57 | 2026-10-21 | [2026-10-21-ac054e02-92a5-46e3-8ca2-f37c65020966.md](transcripts/2026-10-21-ac054e02-92a5-46e3-8ca2-f37c65020966.md) | chat session | Run task 4.2 of the OpenSpec change add-approval-limits: delegate a review of this branch to the reviewer subagent (p... |
 | 58 | 2026-10-21 | [2026-10-21-a1daa72f-665a-42f3-bfc4-18d27be9a6fd.md](transcripts/2026-10-21-a1daa72f-665a-42f3-bfc4-18d27be9a6fd.md) | chat session | Create a readable index for the AI interaction logs. Do not change application code, hooks configuration, or any exis... |
+| 59 | 2026-10-21 | [2026-10-21-b1372f92-73aa-4680-aea4-7e07c69a19bc.md](transcripts/2026-10-21-b1372f92-73aa-4680-aea4-7e07c69a19bc.md) | chat session | Rewrite ASSIGNMENT.md at the repo root as the final assignment write-up, using ONLY the facts in C:\Users\sonis\Downl... |
+| 60 | 2026-10-21 | [2026-10-21-4a1e9105-ce77-488e-84f9-c4c59feaad38.md](transcripts/2026-10-21-4a1e9105-ce77-488e-84f9-c4c59feaad38.md) | chat session | Commit ASSIGNMENT.md and ai-logs/ with this message (do not change any file): docs: write the final ASSIGNMENT.md wri... |
+| 61 | 2026-10-21 | [2026-10-21-bbc94eda-c556-4b6c-9ed3-831d62b2edd2.md](transcripts/2026-10-21-bbc94eda-c556-4b6c-9ed3-831d62b2edd2.md) | chat session | Push the current branch to my fork with `git push` (it already tracks origin/feature/approval-limits). Never use --fo... |
+| 62 | 2026-10-21 | [2026-10-21-89eee893-a1d4-42c2-90b8-4fd144e470b6.md](transcripts/2026-10-21-89eee893-a1d4-42c2-90b8-4fd144e470b6.md) | chat session | Open a pull request ON MY FORK (not the upstream repo) from feature/approval-limits into main: gh pr create --repo sa... |
+| 63 | 2026-10-21 | [2026-10-21-a6c6cf4a-e117-4645-8868-5a486c39331f.md](transcripts/2026-10-21-a6c6cf4a-e117-4645-8868-5a486c39331f.md) | chat session | Update the description of PR #1 on my fork (do not change repo files, do not commit): 1. Get the current body: gh pr ... |
+| 64 | 2026-10-21 | [2026-10-21-d3d745cc-34ae-45f6-b48c-a7c1225f46a0.md](transcripts/2026-10-21-d3d745cc-34ae-45f6-b48c-a7c1225f46a0.md) | chat session | Tick task 4.1 in openspec/changes/add-approval-limits/tasks.md (the before/after mutation scores are now in PR #1's d... |
 
 ## Notes
 

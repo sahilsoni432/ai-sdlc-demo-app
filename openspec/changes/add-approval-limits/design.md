@@ -50,7 +50,8 @@ See [proposal.md](./proposal.md) for motivation and [specs/invoice-approval/spec
     (4) amount above 500,000.00 with a first approval: role is not Director → "Only a Director may give the second approval.";
     (5) same username as the first approver, compared case-insensitively → "A different user must give the second approval.";
     otherwise set Approved, DecidedBy, DecidedAt, keep FirstApprovedBy/FirstApprovedAt, Update called once.
-    A blocked attempt never records, clears or changes the first approval. No UI changes in Stage 2.
+    A blocked attempt never records, clears or changes the first approval. No UI changes in Stage 2. Before these checks the invoice must exist (404 "Invoice … was not found.") and be PendingApproval (409 "… only pending invoices can be decided."); these state checks apply to every user, so an ineligible role approving a non-pending invoice receives the 409 state reason.
+
 
 ## Risks / Trade-offs
 

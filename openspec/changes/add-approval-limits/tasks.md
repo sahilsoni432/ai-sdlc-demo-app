@@ -23,5 +23,5 @@
 ## 4. Stage 4 — Mutation run and PR review
 
 - [ ] 4.1 Run Stryker on the completed implementation using the project command; record the pre-change baseline and after-change scores, source revisions, and meaningful surviving mutants in the PR summary. Verify both scores are traceable to their tested revisions.
-- [ ] 4.2 Request an agent review of the PR against the project review rules; the reviewer agent proposes verdicts, and a human decides the final verdict for every finding: fixed, dismissed with a reason, or deferred with a reason. Record severity-ranked findings and each human-decided verdict, then address required fixes. Verify the review disposition is complete.
+- [x] 4.2 Request an agent review of the PR against the project review rules; the reviewer agent proposes verdicts, and a human decides the final verdict for every finding: fixed, dismissed with a reason, or deferred with a reason. Record severity-ranked findings and each human-decided verdict, then address required fixes. Verify the review disposition is complete.
 - [ ] 4.3 Run `dotnet test backend/InvoiceApp.sln` and the E2E suite with `npm test` from `e2e`; finish Stage 4 with both suites passing.

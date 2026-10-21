@@ -17,8 +17,8 @@
 
 ## 3. Stage 3 — Playwright over-limit UI test
 
-- [ ] 3.1 Add page-object-based Playwright coverage for a Manager creating and submitting a 50,000.01 invoice, attempting approval, seeing the over-limit error, and observing the invoice remain pending; use accessible role/label locators. Verify the targeted test passes.
-- [ ] 3.2 Run the E2E suite with `npm test` from `e2e`; finish Stage 3 with all E2E tests passing.
+- [x] 3.1 Add page-object-based Playwright coverage for a Manager creating and submitting a 50,000.01 invoice, attempting approval, seeing the over-limit error, and observing the invoice remain pending; use accessible role/label locators. Verify the targeted test passes.
+- [x] 3.2 Run the E2E suite with `npm test` from `e2e`; finish Stage 3 with all E2E tests passing.
 
 ## 4. Stage 4 — Mutation run and PR review
 

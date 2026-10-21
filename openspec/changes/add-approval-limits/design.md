@@ -42,6 +42,14 @@ See [proposal.md](./proposal.md) for motivation and [specs/invoice-approval/spec
     (3) Manager and amount above 50,000.00 → "Manager may approve invoices up to 50,000.00.".
     Only when all pass is the invoice changed and Update called once.
 
+11. **Stage 2 approval flow and order of checks** (replaces check (2) of decision 10). All checks run before any invoice field changes:
+    (1) role is not Manager or Director → "Only Manager or Director may approve invoices.";
+    (2) amount at or below 500,000.00 → single-approver rules of decision 10 (Manager limit), approve in one step;
+    (3) amount above 500,000.00 and no first approval yet → record FirstApprovedBy and FirstApprovedAt, status stays PendingApproval, DecidedBy/DecidedAt stay empty, Update called once (the Manager 50,000.00 limit does not apply to this first approval);
+    (4) amount above 500,000.00 with a first approval: role is not Director → "Only a Director may give the second approval.";
+    (5) same username as the first approver, compared case-insensitively → "A different user must give the second approval.";
+    otherwise set Approved, DecidedBy, DecidedAt, keep FirstApprovedBy/FirstApprovedAt, Update called once.
+    A blocked attempt never records, clears or changes the first approval. No UI changes in Stage 2.
 
 ## Risks / Trade-offs
 

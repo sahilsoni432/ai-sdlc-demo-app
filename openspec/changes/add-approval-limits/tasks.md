@@ -10,10 +10,10 @@
 
 ## 2. Stage 2 — Two-approver rule and negative rules (separate commit)
 
-- [ ] 2.1 Add first-approval attribution to the invoice and implement the over-500,000.00 two-step transition: Manager or Director first, invoice remains PendingApproval, and only a different Director may complete it. Remove the Stage 1 interim block for invoices above 500,000.00. Verify Manager-first and Director-first completion paths.
-- [ ] 2.2 Replace the Stage 1 blanket-block test for approvals above 500,000.00 with tests for 500,000.00 Director single approval / 500,000.01 two approvals, Manager or Director as first approver, Director-only second approval, and the wrong-role second-approval block. Verify each test asserts the required state and recorded approver data.
-- [ ] 2.3 Add same-user and case-insensitive username duplicate tests; assert the exact reason, every invoice field unchanged, and no `Update` call after each blocked attempt, then verify a different Director can complete the unchanged first approval.
-- [ ] 2.4 Run `dotnet test backend/InvoiceApp.sln`; commit Stage 2 separately only after all tests pass.
+- [x] 2.1 Add first-approval attribution to the invoice and implement the over-500,000.00 two-step transition: Manager or Director first, invoice remains PendingApproval, and only a different Director may complete it. Remove the Stage 1 interim block for invoices above 500,000.00. Verify Manager-first and Director-first completion paths.
+- [x] 2.2 Replace the Stage 1 blanket-block test for approvals above 500,000.00 with tests for 500,000.00 Director single approval / 500,000.01 two approvals, Manager or Director as first approver, Director-only second approval, and the wrong-role second-approval block. Verify each test asserts the required state and recorded approver data.
+- [x] 2.3 Add same-user and case-insensitive username duplicate tests; assert the exact reason, every invoice field unchanged, and no `Update` call after each blocked attempt, then verify a different Director can complete the unchanged first approval.
+- [x] 2.4 Run `dotnet test backend/InvoiceApp.sln`; commit Stage 2 separately only after all tests pass.
 
 ## 3. Stage 3 — Playwright over-limit UI test
 

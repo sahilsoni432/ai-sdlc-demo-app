@@ -19,8 +19,19 @@ public class ApprovalServiceTests
             Amount = amount,
             Status = InvoiceStatus.PendingApproval,
             CreatedAt = new DateTime(2025, 4, 12, 9, 30, 0, DateTimeKind.Utc),
-            DecidedBy = "prior.approver",
-            DecidedAt = new DateTime(2025, 4, 13, 10, 15, 0, DateTimeKind.Utc),
+            DecisionNote = "Prior decision note"
+        };
+
+    private static Invoice InvoiceWithFirstApproval(decimal amount, string approver) =>
+        new()
+        {
+            Id = "INV-LIMIT",
+            CustomerName = "Test School",
+            Amount = amount,
+            Status = InvoiceStatus.PendingApproval,
+            CreatedAt = new DateTime(2025, 4, 12, 9, 30, 0, DateTimeKind.Utc),
+            FirstApprovedBy = approver,
+            FirstApprovedAt = new DateTime(2025, 4, 13, 10, 15, 0, DateTimeKind.Utc),
             DecisionNote = "Prior decision note"
         };
 
@@ -30,6 +41,8 @@ public class ApprovalServiceTests
         invoice.Amount,
         invoice.Status,
         invoice.CreatedAt,
+        invoice.FirstApprovedBy,
+        invoice.FirstApprovedAt,
         invoice.DecidedBy,
         invoice.DecidedAt,
         invoice.DecisionNote);
@@ -52,6 +65,8 @@ public class ApprovalServiceTests
         decimal Amount,
         InvoiceStatus Status,
         DateTime CreatedAt,
+        string? FirstApprovedBy,
+        DateTime? FirstApprovedAt,
         string? DecidedBy,
         DateTime? DecidedAt,
         string? DecisionNote);
@@ -157,24 +172,115 @@ public class ApprovalServiceTests
     }
 
     [Theory]
-    [InlineData("Manager")]
-    [InlineData("Director")]
-    public void Approve_BlocksEligibleRoleAbove500000WithoutChangingInvoice(string role)
+    [InlineData("Manager", "demo.manager")]
+    [InlineData("Director", "demo.director")]
+    public void Approve_RecordsFirstApprovalAbove500000WithoutDecidingInvoice(string role, string approver)
     {
         var invoice = InvoiceForApproval(500_000.01m);
+        var repository = new FakeInvoiceRepository(invoice);
+        var service = new ApprovalService(repository);
+        var approvalStartedAt = DateTime.UtcNow;
+
+        var result = service.Approve(invoice.Id, approver, role);
+
+        Assert.Equal(InvoiceStatus.PendingApproval, result.Status);
+        Assert.Equal(approver, result.FirstApprovedBy);
+        Assert.NotNull(result.FirstApprovedAt);
+        Assert.InRange(result.FirstApprovedAt.Value, approvalStartedAt, DateTime.UtcNow);
+        Assert.Null(result.DecidedBy);
+        Assert.Null(result.DecidedAt);
+        Assert.Equal(1, repository.UpdateCount);
+    }
+
+    [Theory]
+    [InlineData("demo.manager", "demo.director")]
+    [InlineData("demo.director", "demo.director2")]
+    public void Approve_DifferentDirectorCompletesApprovalAbove500000(
+        string firstApprover,
+        string secondApprover)
+    {
+        var invoice = InvoiceWithFirstApproval(500_000.01m, firstApprover);
+        var firstApprovalAt = invoice.FirstApprovedAt;
+        var repository = new FakeInvoiceRepository(invoice);
+        var service = new ApprovalService(repository);
+
+        var result = service.Approve(invoice.Id, secondApprover, "Director");
+
+        Assert.Equal(InvoiceStatus.Approved, result.Status);
+        Assert.Equal(firstApprover, result.FirstApprovedBy);
+        Assert.Equal(firstApprovalAt, result.FirstApprovedAt);
+        Assert.Equal(secondApprover, result.DecidedBy);
+        Assert.NotNull(result.DecidedAt);
+        Assert.Equal(1, repository.UpdateCount);
+    }
+
+    [Fact]
+    public void Approve_BlocksManagerAsSecondApproverWithoutChangingFirstApproval()
+    {
+        var invoice = InvoiceWithFirstApproval(500_000.01m, "demo.director");
         var before = Snapshot(invoice);
         var repository = new FakeInvoiceRepository(invoice);
         var service = new ApprovalService(repository);
 
         var exception = Assert.Throws<ApprovalBlockedException>(
-            () => service.Approve(invoice.Id, $"demo.{role.ToLowerInvariant()}", role));
+            () => service.Approve(invoice.Id, "demo.manager2", "Manager"));
 
         AssertBlockedAttemptUnchanged(
             invoice,
             before,
             repository,
             exception,
-            "Invoices above 500,000.00 require two approvers.");
+            "Only a Director may give the second approval.");
+    }
+
+    [Fact]
+    public void Approve_ManagerFirstThenSameManagerRetryIsBlockedByDirectorOnlyRule()
+    {
+        var invoice = InvoiceForApproval(500_000.01m);
+        var repository = new FakeInvoiceRepository(invoice);
+        var service = new ApprovalService(repository);
+        service.Approve(invoice.Id, "demo.manager", "Manager");
+        var beforeRetry = Snapshot(invoice);
+
+        var exception = Assert.Throws<ApprovalBlockedException>(
+            () => service.Approve(invoice.Id, "demo.manager", "Manager"));
+
+        Assert.Equal("Only a Director may give the second approval.", exception.Message);
+        Assert.Equal(beforeRetry, Snapshot(invoice));
+        Assert.Equal(1, repository.UpdateCount);
+    }
+
+    [Theory]
+    [InlineData("demo.manager")]
+    [InlineData("DEMO.MANAGER")]
+    public void Approve_BlocksSameUserAsSecondApproverAndDifferentDirectorCanComplete(string retryUsername)
+    {
+        var invoice = InvoiceWithFirstApproval(500_000.01m, "demo.manager");
+        var firstApprovalAt = invoice.FirstApprovedAt;
+        var beforeAttempt = Snapshot(invoice);
+        var repository = new FakeInvoiceRepository(invoice);
+        var service = new ApprovalService(repository);
+
+        var exception = Assert.Throws<ApprovalBlockedException>(
+            () => service.Approve(invoice.Id, retryUsername, "Director"));
+
+        AssertBlockedAttemptUnchanged(
+            invoice,
+            beforeAttempt,
+            repository,
+            exception,
+            "A different user must give the second approval.");
+        Assert.Equal("demo.manager", invoice.FirstApprovedBy);
+        Assert.Equal(firstApprovalAt, invoice.FirstApprovedAt);
+
+        var result = service.Approve(invoice.Id, "demo.director", "Director");
+
+        Assert.Equal(InvoiceStatus.Approved, result.Status);
+        Assert.Equal("demo.manager", result.FirstApprovedBy);
+        Assert.Equal(firstApprovalAt, result.FirstApprovedAt);
+        Assert.Equal("demo.director", result.DecidedBy);
+        Assert.NotNull(result.DecidedAt);
+        Assert.Equal(1, repository.UpdateCount);
     }
 
     [Theory]
@@ -182,7 +288,7 @@ public class ApprovalServiceTests
     [InlineData("Clerk")]
     public void Approve_IneligibleRoleTakesPrecedenceAbove500000AndLeavesInvoiceUnchanged(string role)
     {
-        var invoice = InvoiceForApproval(500_000.01m);
+        var invoice = InvoiceWithFirstApproval(500_000.01m, "demo.manager");
         var before = Snapshot(invoice);
         var repository = new FakeInvoiceRepository(invoice);
         var service = new ApprovalService(repository);

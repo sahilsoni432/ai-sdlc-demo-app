@@ -14,7 +14,7 @@ namespace InvoiceApp.Tests;
 
 public class ApprovalsControllerTests
 {
-    private static Invoice InvoiceFor(decimal amount) =>
+    private static Invoice InvoiceFor(decimal amount, string? firstApprover = null) =>
         new()
         {
             Id = "INV-API",
@@ -22,6 +22,10 @@ public class ApprovalsControllerTests
             Amount = amount,
             Status = InvoiceStatus.PendingApproval,
             CreatedAt = new DateTime(2025, 5, 10, 8, 0, 0, DateTimeKind.Utc),
+            FirstApprovedBy = firstApprover,
+            FirstApprovedAt = firstApprover is null
+                ? null
+                : new DateTime(2025, 5, 11, 8, 30, 0, DateTimeKind.Utc),
             DecidedBy = "prior.approver",
             DecidedAt = new DateTime(2025, 5, 11, 9, 0, 0, DateTimeKind.Utc),
             DecisionNote = "Prior decision note"
@@ -33,6 +37,8 @@ public class ApprovalsControllerTests
         invoice.Amount,
         invoice.Status,
         invoice.CreatedAt,
+        invoice.FirstApprovedBy,
+        invoice.FirstApprovedAt,
         invoice.DecidedBy,
         invoice.DecidedAt,
         invoice.DecisionNote);
@@ -75,25 +81,30 @@ public class ApprovalsControllerTests
         decimal Amount,
         InvoiceStatus Status,
         DateTime CreatedAt,
+        string? FirstApprovedBy,
+        DateTime? FirstApprovedAt,
         string? DecidedBy,
         DateTime? DecidedAt,
         string? DecisionNote);
 
     [Theory]
-    [InlineData("Manager", "50000.01", "Manager may approve invoices up to 50,000.00.")]
-    [InlineData("Manager", "500000.01", "Invoices above 500,000.00 require two approvers.")]
-    [InlineData("Director", "500000.01", "Invoices above 500,000.00 require two approvers.")]
-    [InlineData("Admin", "500000.01", "Only Manager or Director may approve invoices.")]
-    [InlineData("Clerk", "500000.01", "Only Manager or Director may approve invoices.")]
+    [InlineData("Manager", "demo.manager", "50000.01", null, "Manager may approve invoices up to 50,000.00.")]
+    [InlineData("Admin", "demo.admin", "500000.01", null, "Only Manager or Director may approve invoices.")]
+    [InlineData("Clerk", "demo.clerk", "500000.01", null, "Only Manager or Director may approve invoices.")]
+    [InlineData("Manager", "demo.manager2", "500000.01", "demo.director", "Only a Director may give the second approval.")]
+    [InlineData("Director", "demo.director", "500000.01", "demo.director", "A different user must give the second approval.")]
+    [InlineData("Director", "DEMO.DIRECTOR", "500000.01", "demo.director", "A different user must give the second approval.")]
     public void Approve_MapsBlockedApprovalTo403WithExactErrorBodyAndNoMutation(
         string role,
+        string username,
         string amountText,
+        string? firstApprover,
         string expectedReason)
     {
         var amount = decimal.Parse(amountText, CultureInfo.InvariantCulture);
-        var invoice = InvoiceFor(amount);
+        var invoice = InvoiceFor(amount, firstApprover);
         var before = Snapshot(invoice);
-        var (controller, repository) = CreateController(invoice, $"demo.{role.ToLowerInvariant()}", role);
+        var (controller, repository) = CreateController(invoice, username, role);
 
         var action = controller.Approve(invoice.Id);
 

@@ -36,6 +36,13 @@ See [proposal.md](./proposal.md) for motivation and [specs/invoice-approval/spec
 
 9. **Make the high-value approval rule an explicit staged change.** Interim Stage 1 behavior blocks ANY approval attempt for an invoice above 500,000.00 with reason `Invoices above 500,000.00 require two approvers.`, returning 403 without changing the invoice or calling repository `Update`. Stage 2 removes this interim block and replaces its blanket-block test with tests for the two-approver workflow.
 
+10. **Order of approval checks.** All checks run before any invoice field changes:
+    (1) role is not Manager or Director → "Only Manager or Director may approve invoices.";
+    (2) Stage 1 only: amount above 500,000.00 → "Invoices above 500,000.00 require two approvers.";
+    (3) Manager and amount above 50,000.00 → "Manager may approve invoices up to 50,000.00.".
+    Only when all pass is the invoice changed and Update called once.
+
+
 ## Risks / Trade-offs
 
 - [Role checks in a filter could hide the required rejection reason] → Route authenticated approval attempts through Domain; use a dedicated exception mapping for eligibility blocks.

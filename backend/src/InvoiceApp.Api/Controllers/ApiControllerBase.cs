@@ -12,6 +12,10 @@ public abstract class ApiControllerBase : ControllerBase
         {
             return Ok(action());
         }
+        catch (ApprovalBlockedException ex)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { error = ex.Message });
+        }
         catch (KeyNotFoundException ex)
         {
             return NotFound(new { error = ex.Message });

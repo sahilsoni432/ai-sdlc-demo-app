@@ -2,7 +2,7 @@ namespace InvoiceApp.Domain;
 
 /// <summary>
 /// Moves an invoice through its lifecycle: Draft -> PendingApproval -> Approved or Rejected.
-/// One invoice at a time, decided as a whole by a single approver.
+/// High-value invoices require two distinct approvers to complete approval.
 /// </summary>
 public class ApprovalService
 {
@@ -28,10 +28,47 @@ public class ApprovalService
         return invoice;
     }
 
-    public Invoice Approve(string invoiceId, string approver)
+    public Invoice Approve(string invoiceId, string approver, string role)
     {
         var invoice = Find(invoiceId);
         EnsurePending(invoice);
+
+        if (role is not ("Manager" or "Director"))
+        {
+            throw new ApprovalBlockedException("Only Manager or Director may approve invoices.");
+        }
+
+        if (invoice.Amount <= 500_000.00m)
+        {
+            if (role == "Manager" && invoice.Amount > 50_000.00m)
+            {
+                throw new ApprovalBlockedException("Manager may approve invoices up to 50,000.00.");
+            }
+
+            invoice.Status = InvoiceStatus.Approved;
+            invoice.DecidedBy = approver;
+            invoice.DecidedAt = DateTime.UtcNow;
+            _repository.Update(invoice);
+            return invoice;
+        }
+
+        if (invoice.FirstApprovedBy is null)
+        {
+            invoice.FirstApprovedBy = approver;
+            invoice.FirstApprovedAt = DateTime.UtcNow;
+            _repository.Update(invoice);
+            return invoice;
+        }
+
+        if (role != "Director")
+        {
+            throw new ApprovalBlockedException("Only a Director may give the second approval.");
+        }
+
+        if (string.Equals(approver, invoice.FirstApprovedBy, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ApprovalBlockedException("A different user must give the second approval.");
+        }
 
         invoice.Status = InvoiceStatus.Approved;
         invoice.DecidedBy = approver;
